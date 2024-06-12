@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Administrador de Pacientes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-100 h-screen">
+    <h1 class="font-black text-5xl text-center md:w-2/3 mx-auto mt-20">
+        Seguimiento Pacientes
+        <span class="text-indigo-700">Veterinaria</span>
+    </h1>
+
+    <div class="mt-12 md:flex container mx-auto ">
+        <div class="md:w-1/2 lg:w-2/5 mx-5">
+            <h2 class="font-black text-3xl text-center">Seguimiento Pacientes</h2>
+
+            <p class="text-lg mt-5 text-center mb-10">
+                Añade Pacientes y
+                <span class="text-indigo-600 font-bold">Administralos</span>
+            </p>
+
+            <form 
+                id="formulario-cita"
+                class="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
+                method="POST"
+                action="{% if editando %}{% url 'editar_paciente' paciente_id %}{% else %}{% url 'crear_paciente' %}{% endif %}"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ paciente_id|default:'' }}">
+                <div class="mb-5">
+                    <label for="paciente" class="block text-gray-700 uppercase font-bold text-sm">
+                        Nombre Paciente:
+                    </label>
+                    <input
+                        class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        type="text"
+                        id="paciente"
+                        placeholder="Nombre Paciente"
+                        name="nombre"
+                        value="{{ form.nombre.value|default:'' }}"
+                    />  
+                    {% if form.nombre.errors %}
+                        <p class="text-red-600 text-sm">{{ form.nombre.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-5">
+                    <label for="propietario" class="block text-gray-700 uppercase font-bold text-sm">
+                        Nombre Propietario:
+                    </label>
+                    <input
+                        class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        type="text"
+                        id="propietario"
+                        placeholder="Nombre Propietario"
+                        name="propietario"
+                        value="{{ form.propietario.value|default:'' }}"
+                    />  
+                    {% if form.propietario.errors %}
+                        <p class="text-red-600 text-sm">{{ form.propietario.errors }}</p>
+                    {% endif %}
+                </div>
+                <div class="mb-5">
+                    <label for="email" class="block text-gray-700 uppercase font-bold text-sm">
+                        Email Contacto
+                    </label>
+                    <input
+                        class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        type="email"
+                        id="email"
+                        placeholder="E-mail Contacto"
+                        name="correo"
+                        value="{{ form.correo.value|default:'' }}"
+                    />  
+                    {% if form.correo.errors %}
+                        <p class="text-red-600 text-sm">{{ form.correo.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-5">
+                    <label for="fecha" class="block text-gray-700 uppercase font-bold text-sm">
+                        Fecha Registro
+                    </label>
+                    <input
+                        class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        type="date"
+                        id="fecha"
+                        name="fecha_registro"
+                        value="{{ form.fecha_registro.value|default:'' }}"
+                    />  
+                    {% if form.fecha_registro.errors %}
+                        <p class="text-red-600 text-sm">{{ form.fecha_registro.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-5">
+                    <label for="sintomas" class="block text-gray-700 uppercase font-bold text-sm">
+                        Síntomas
+                    </label>
+                    <textarea
+                        class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        id="sintomas"
+                        name="sintomas"
+                        placeholder="Síntomas del Paciente"
+                    >{{ form.sintomas.value|default:'' }}</textarea>  
+                    {% if form.sintomas.errors %}
+                        <p class="text-red-600 text-sm">{{ form.sintomas.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <input
+                    type="submit"
+                    id="formularioInput"
+                    class="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
+                    value="{% if editando %}Guardar Cambios{% else %}Registrar Paciente{% endif %}"
+                />
+            </form>
+        </div>
+
+        <div class="md:w-1/2 lg:w-3/5 md:h-screen overflow-y-scroll">
+            <h2 class="font-black text-3xl text-center">Listado Pacientes</h2>
+            <p class="text-xl mt-5 mb-10 text-center">
+                Administra tus
+                <span class="text-indigo-600 font-bold">Pacientes y Citas</span>
+            </p>
+            <div id="citas">
+                {% if pacientes %}
+                    <ul class="p-5">
+                        {% for paciente in pacientes %}
+                            <li class="mb-5 p-5 bg-white shadow-md rounded-lg" data-id="{{ paciente.id }}">
+                                <p class="font-bold">Nombre: <span class="font-normal">{{ paciente.nombre }}</span></p>
+                                <p class="font-bold">Propietario: <span class="font-normal">{{ paciente.propietario }}</span></p>
+                                <p class="font-bold">Email: <span class="font-normal">{{ paciente.correo }}</span></p>
+                                <p class="font-bold">Fecha de Alta: <span class="font-normal">{{ paciente.fecha_alta }}</span></p>
+                                <p class="font-bold">Síntomas: <span class="font-normal">{{ paciente.sintomas }}</span></p>
+                                <div class="flex justify-between mt-5">
+                                    <button class="py-2 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase rounded-lg flex items-center gap-2 btn-editar">Editar</button>
+                                    <button class="py-2 px-10 bg-red-600 hover:bg-red-700 text-white font-bold uppercase rounded-lg flex items-center gap-2 btn-eliminar">Eliminar</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-xl mt-5 mb-10 text-center">No Hay Pacientes</p>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
