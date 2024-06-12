@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="font-bold">Nombre: <span class="font-normal">${cita.nombre}</span></p>
                 <p class="font-bold">Propietario: <span class="font-normal">${cita.propietario}</span></p>
                 <p class="font-bold">Email: <span class="font-normal">${cita.correo}</span></p>
-                <p class="font-bold">Fecha de Alta: <span class="font-normal">${cita.fecha_alta}</span></p>
+                <p class="font-bold">Fecha de Alta: <span class="font-normal">${new Date(cita.fecha_alta).toLocaleDateString()}</span></p>
                 <p class="font-bold">Síntomas: <span class="font-normal">${cita.sintomas}</span></p>
                 <div class="flex justify-between mt-5">
                     <button class="py-2 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase rounded-lg flex items-center gap-2 btn-editar">Editar</button>
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nombre: pacienteInput.value,
             propietario: propietarioInput.value,
             correo: emailInput.value,
-            fecha_registro: fechaInput.value,
+            fecha_registro: new Date(fechaInput.value).toISOString().split('T')[0], // Formateo a yyyy-MM-dd
             sintomas: sintomasInput.value
         };
 
@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await respuesta.json();
             console.log('Cita guardada:', data);
+
+            // Actualizar la lista de citas sin necesidad de recargar la página
             obtenerCitas();
           
         } catch (error) {
@@ -112,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pacienteInput.value = cita.nombre;
         propietarioInput.value = cita.propietario;
         emailInput.value = cita.correo;
-        fechaInput.value = cita.fecha_registro.split('T')[0]; // Formateo a yyyy-MM-dd
+        fechaInput.value = new Date(cita.fecha_registro).toISOString().split('T')[0]; // Formateo a yyyy-MM-dd
         sintomasInput.value = cita.sintomas;
 
         editando = true;
