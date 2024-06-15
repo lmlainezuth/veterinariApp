@@ -43,8 +43,9 @@ def obtener_citas(request):
     if request.method == 'GET':
         pacientes = Paciente.objects.all()
         pacientes_lista = list(pacientes.values('id', 'nombre', 'propietario', 'correo', 'fecha_alta', 'fecha_registro', 'sintomas'))
+        print(pacientes_lista)  # Verifica los datos en la consola
         return JsonResponse(pacientes_lista, safe=False)
-    
+
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)

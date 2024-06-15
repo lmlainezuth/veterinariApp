@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${respuesta.status}`);
             }
             const data = await respuesta.json();
+            console.log(data);  // Verifica los datos recibidos aquí
             citas.citas = data;
             mostrarCitas();
         } catch (error) {
@@ -45,11 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const citaHTML = document.createElement('li');
             citaHTML.classList.add('mb-5', 'p-5', 'bg-white', 'shadow-md', 'rounded-lg');
             citaHTML.dataset.id = cita.id;
+
+            // Verificar las fechas antes de formatearlas
+            console.log(cita.fecha_alta, cita.fecha_registro);
+
+            // Formateo de la fecha
+            const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const fechaAltaFormateada = new Date(cita.fecha_alta).toLocaleDateString('es-ES', opcionesFecha);
+            const fechaRegistroFormateada = new Date(cita.fecha_registro).toLocaleDateString('es-ES', opcionesFecha);
+
             citaHTML.innerHTML = `
                 <p class="font-bold">Nombre: <span class="font-normal">${cita.nombre}</span></p>
                 <p class="font-bold">Propietario: <span class="font-normal">${cita.propietario}</span></p>
                 <p class="font-bold">Email: <span class="font-normal">${cita.correo}</span></p>
-                <p class="font-bold">Fecha de Alta: <span class="font-normal">${new Date(cita.fecha_alta).toLocaleDateString()}</span></p>
+                <p class="font-bold">Fecha de Alta: <span class="font-normal">${fechaAltaFormateada}</span></p>
+                <p class="font-bold">Fecha de Registro: <span class="font-normal">${fechaRegistroFormateada}</span></p>
                 <p class="font-bold">Síntomas: <span class="font-normal">${cita.sintomas}</span></p>
                 <div class="flex justify-between mt-5">
                     <button class="py-2 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase rounded-lg flex items-center gap-2 btn-editar">Editar</button>
@@ -139,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Cita eliminada:', data);
             citas.eliminar(id);
           
-
         } catch (error) {
             console.error('Error eliminando cita:', error);
             alert(`Error eliminando cita: ${error.message}`);
